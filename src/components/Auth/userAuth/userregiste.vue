@@ -9,18 +9,18 @@
           <el-row class="form-wrapper">
             <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
               <el-form-item label="名称">
-                <el-input v-model="formLabelAlign.name"></el-input>
+                <el-input v-model="formLabelAlign.uname"></el-input>
               </el-form-item>
               <el-form-item label="邮箱">
-                <el-input v-model="formLabelAlign.name"></el-input>
+                <el-input v-model="formLabelAlign.uemail"></el-input>
               </el-form-item>
               <el-form-item label="密码">
-                <el-input type="password" v-model="formLabelAlign.region"></el-input>
+                <el-input type="password" v-model="formLabelAlign.upassword"></el-input>
               </el-form-item>
             </el-form>
           </el-row>
           <el-row type="flex" class="row-bg" justify="center">
-            <el-button type="primary"  @click="test">注册</el-button>
+            <el-button type="primary"  @click="registe">注册</el-button>
           </el-row>
         </el-col>
         <el-col :span="8" id="right">
@@ -43,21 +43,33 @@ export default {
     return {
       labelPosition: "right",
       formLabelAlign: {
-        name: "",
-        region: "",
-        type: ""
+        uname: "",
+        uemail: "",
+        upassword: ""
       }
     };
   },
   methods:{
-     test: function (event) {
+    registe: function(event) {
       this.axios({
-        method: 'get',
-        url:  'user/1',
-      }).then(response => {
-        console.log(response.data)
+        method: "post",
+        url: "user",
+        data: this.formLabelAlign
       })
-     },
+        .then(response => {
+          if (response.data===1) {
+            this.$message("成功，即将跳转登录页...");
+            setTimeout(() => {
+              this.$router.push({ path: "/ulogin" });
+            }, 3000);
+          } else {
+            this.$message.error("注册失败");
+          }
+        })
+        .catch(error => {
+          this.$message.error("网络错误");
+        });
+    }
       
   }
 };

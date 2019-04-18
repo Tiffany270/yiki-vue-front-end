@@ -1,48 +1,54 @@
 <template>
-  <el-container>
-    <el-row class="top-bar" :gutter="20">
-      <el-col :span="20">
-        <div class="grid-content bg-purple">
-          <h2>welcome here find your fav</h2>
-        </div>
-      </el-col>
-      <el-col :span="2">
-        <div class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">登录</router-link>
-          </a>
-        </div>
-      </el-col>
-      <el-col :span="2">
-        <div class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">注册</router-link>
-          </a>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row class="search" type="flex" justify="center">
-      <el-col :span="8">
-        <el-input v-model="input" placeholder="搜索一下"></el-input>
-      </el-col>
-      <el-col :span="6">
-        <el-button type="info">search</el-button>
-      </el-col>
-    </el-row>
-   
-    <!-- 头部分割线-----don't know why~ -->
-    <el-main class="main">
-      <!-- main的顶部 -->
-      <el-row :gutter="20">
-        <el-col :span="16">
-          <div class="homebanner">xxxx</div>
+    <el-container>
+      <el-row class="top-bar" :gutter="20">
+        <el-col :span="20">
+          <div class="grid-content bg-purple">
+            <h2>welcome here find your fav</h2>
+          </div>
         </el-col>
-        <el-col :span="8">
-          <div class="homesiderbar">xx</div>
+        <el-col :span="2">
+          <div class="grid-content bg-purple">
+            <a>
+              <router-link to="/auth">登录</router-link>
+            </a>
+          </div>
+        </el-col>
+        <el-col :span="2">
+          <div class="grid-content bg-purple">
+            <a>
+              <router-link to="/auth">注册</router-link>
+            </a>
+          </div>
         </el-col>
       </el-row>
-    </el-main>
-  </el-container>
+      <el-row class="search" type="flex" justify="center">
+        <el-col :span="8">
+          <el-input v-model="input" placeholder="搜索一下"></el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-button type="info">search</el-button>
+        </el-col>
+      </el-row>
+
+      <!-- 头部导航和bannner分割线-----don't know why~ -->
+
+      <el-header class="header-wrapper">
+        <div>
+          <el-row :gutter="20">
+            <el-col :span="16">
+              <div class="homebanner">xxxx</div>
+            </el-col>
+            <el-col :span="8">
+              <div class="homesiderbar">xx</div>
+            </el-col>
+          </el-row>
+        </div>
+      </el-header>
+
+      <el-main>
+        <!-- main的顶部 -->
+      </el-main>
+    </el-container>
 </template>
 
 <script>
@@ -60,7 +66,7 @@ export default {
 
 
 <style lang="scss" scoped>
-.main {
+.header-wrapper {
   padding-left: 4%;
   padding-right: 4%;
   background: beige;

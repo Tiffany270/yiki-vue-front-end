@@ -6,9 +6,10 @@ import fregiste from '@/components/Auth/firmAuth/firmregiste'
 import ulogin from '@/components/Auth/userAuth/userlogin'
 import uregiste from '@/components/Auth/userAuth/userregiste'
 import auth from '@/components/Auth/auth'
-
+import Vuex from 'vuex'
+import 'es6-promise/auto'
 Vue.use(Router)
-
+Vue.use(Vuex)
 export default new Router({
   routes: [
     {
