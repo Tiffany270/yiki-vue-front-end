@@ -5,7 +5,7 @@
         <el-col :span="16" id="left">
           <el-row type="flex" class="row-bg" justify="center">
             <h2>
-              WELCOME
+               企业版
               <span>looking for new genius</span>
             </h2>
           </el-row>
@@ -26,7 +26,7 @@
         <el-col :span="8" id="right">
           <div>
             新用户？
-            <router-link to="/registe">点击注册</router-link>
+            <router-link to="/fregiste">点击注册</router-link>
           </div>
         </el-col>
       </el-row>
