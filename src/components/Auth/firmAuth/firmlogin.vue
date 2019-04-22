@@ -5,17 +5,17 @@
         <el-col :span="16" id="left">
           <el-row type="flex" class="row-bg" justify="center">
             <h2>
-               企业版
+              企业版
               <span>looking for new genius</span>
             </h2>
           </el-row>
           <el-row class="form-wrapper">
             <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
               <el-form-item label="名称">
-                <el-input v-model="formLabelAlign.uname"></el-input>
+                <el-input v-model="formLabelAlign.cname"></el-input>
               </el-form-item>
               <el-form-item label="密码">
-                <el-input type="password" v-model="formLabelAlign.upassword"></el-input>
+                <el-input type="password" v-model="formLabelAlign.cpassword"></el-input>
               </el-form-item>
             </el-form>
           </el-row>
@@ -43,8 +43,8 @@ export default {
     return {
       labelPosition: "right",
       formLabelAlign: {
-        uname: "",
-        upassword: ""
+        cname: "",
+        cpassword: ""
       }
     };
   },
@@ -53,21 +53,29 @@ export default {
       console.log(this.formLabelAlign);
       this.axios({
         method: "post",
-        url: "authUser",
+        url: "authFirm",
         data: this.formLabelAlign
       })
         .then(response => {
-          if(response.data){
-            this.$message('登录成功，即将跳转...');
+          if (response.data) {
+            this.$message("登录成功，即将跳转...");
+            let firm = {
+              id: response.data.cid,
+              name: response.data.cname,
+              email: response.data.cemail,
+              auth: 1
+              //0->user,1->label
+            };
+            localStorage.setItem("auth", JSON.stringify(firm));
             setTimeout(() => {
-            this.$router.push({path:'/'})              
+              this.$router.push({ path: "/" });
             }, 3000);
-          }else{
-             this.$message.error('密码和用户名不一致');
+          } else {
+            this.$message.error("密码和用户名不一致");
           }
         })
         .catch(error => {
-           this.$message.error('网络错误');
+          this.$message.error("网络错误");
         });
     }
   }

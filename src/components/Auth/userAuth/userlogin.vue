@@ -60,9 +60,11 @@ export default {
           if (response.data) {
             this.$message("登录成功，即将跳转...");
             let user = {
+              id: response.data.uid,
               name: response.data.uname,
-              email: response.data.upassword,
-              auth: 0//0->user,1->label
+              email: response.data.uemail,
+              auth: 0
+              //0->user,1->label
             };
             localStorage.setItem("auth", JSON.stringify(user));
             setTimeout(() => {
