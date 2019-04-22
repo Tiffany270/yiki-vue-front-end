@@ -171,7 +171,7 @@
 
 <script>
 export default {
-  name: "useInfo",
+  name: "userResume",
   data() {
     return {
       activeName: "first",
