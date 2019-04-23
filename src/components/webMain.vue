@@ -81,34 +81,16 @@
       <el-tabs class="panel-wrapper" v-model="activeName">
         <el-tab-pane label="热门公司" name="first">
           <el-row>
-            <el-col :span="4" v-for="(o, index) in 4" :key="o" :offset="index > 0 ? 2 : 0">
-              <el-card :body-style="{ padding: '0px' }">
+            <el-col :span="4" v-for="(item) in firmInfoListData" :key="item" :offset=" 1 ">
+              <el-card style="cursor:pointer" :body-style="{ padding: '0px' }">
                 <img
-                  src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+                  src="https:////www.lgstatic.com/thumbnail_160x160/i/image2/M01/8D/84/CgotOVubY2uAQ2pWAAIHadcTOGA593.png"
                   class="image"
                 >
                 <div style="padding: 14px;">
-                  <span>好吃的汉堡</span>
+                  <span>{{item.name }}</span>
                   <div class="bottom clearfix">
-                    <time class="time">{{ currentDate }}</time>
-                    <el-button type="text" class="button">操作按钮</el-button>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="4" v-for="(o, index) in 4" :key="o" :offset="index > 0 ? 2 : 0">
-              <el-card :body-style="{ padding: '0px' }">
-                <img
-                  src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                  class="image"
-                >
-                <div style="padding: 14px;">
-                  <span>好吃的汉堡</span>
-                  <div class="bottom clearfix">
-                    <time class="time">{{ currentDate }}</time>
-                    <el-button type="text" class="button">操作按钮</el-button>
+                    <time class="time">{{item.brief }}</time>
                   </div>
                 </div>
               </el-card>
@@ -165,7 +147,7 @@ export default {
   name: "webMain",
   data() {
     return {
-      currentDate:'xxx',
+      currentDate: "xxx",
       activeName: "first",
       bannerimgurls: [
         "https://sxsimg.xiaoyuanzhao.com/1C/91/1C49B905FC50A45FCC41C53527CBB291.png",
@@ -173,20 +155,34 @@ export default {
         "https://sxsimg.xiaoyuanzhao.com/73/DC/73A14E131C300E223BB5EEDE6D5AC7DC.png",
         "https://sxsimg.xiaoyuanzhao.com/7B/A2/7B3B8852D5C258D7AD364FE175CE56A2.png"
       ],
+      firmInfoListData: null,
       name: "",
       msg: "Welcome to Your Vue.js App",
       input: ""
     };
   },
   created() {
-    if (localStorage.getItem("auth")!==null) {
+    if (localStorage.getItem("auth") !== null) {
       this.name = JSON.parse(localStorage.getItem("auth")).name;
     }
   },
   methods: {
     gotoInfo: function() {
       this.$router.push({ path: "/userInfo" });
+    },
+    getAllFirmInfo: function() {
+      this.axios({
+        method: "get",
+        url: "/allFirmInfo"
+      }).then(x => {
+        this.firmInfoListData = x.data;
+      });
     }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.getAllFirmInfo();
+    }, 0);
   }
 };
 </script>
@@ -197,7 +193,7 @@ export default {
 .main-wrapper {
   padding: 2% 4% 2% 4%;
 }
-a{
+a {
   cursor: pointer;
 }
 .panel-wrapper {

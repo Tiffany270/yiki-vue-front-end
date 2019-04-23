@@ -7,6 +7,8 @@ import ulogin from '@/components/Auth/userAuth/userlogin'
 import uregiste from '@/components/Auth/userAuth/userregiste'
 import userResume from '@/components/info/userResume'
 import firmInfo from '@/components/info/firmInfo'
+import aboutFirm from '@/components/aboutFirm'
+
 import detail from '@/components/detail'
 
 import auth from '@/components/Auth/auth'
@@ -57,6 +59,11 @@ const routes = [{
   path: '/detail',
   name: 'detail',
   component: detail
+},
+{
+  path: '/about',
+  name: 'aboutFirm',
+  component: aboutFirm
 },
 ]
 
