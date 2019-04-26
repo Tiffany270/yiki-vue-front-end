@@ -8,6 +8,8 @@ import uregiste from '@/components/Auth/userAuth/userregiste'
 import userResume from '@/components/info/userResume'
 import firmInfo from '@/components/info/firmInfo'
 import aboutFirm from '@/components/aboutFirm'
+import mainFirm from '@/components/main/mainFirm'
+
 
 import detail from '@/components/detail'
 
@@ -65,6 +67,11 @@ const routes = [{
   name: 'aboutFirm',
   component: aboutFirm
 },
+{
+  path: "/mainFirm/:id",
+  component: mainFirm,
+  name: 'mainFirm'
+}
 ]
 
 const router = new Router({

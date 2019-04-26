@@ -81,9 +81,10 @@
       <el-tabs class="panel-wrapper" v-model="activeName">
         <el-tab-pane label="热门公司" name="first">
           <el-row>
-            <el-col :span="4" v-for="(item) in firmInfoListData" :key="item" :offset=" 1 ">
+            <el-col :span="4" v-for="(item) in firmInfoListData" :key="item.cid" :offset=" 1 ">
               <el-card style="cursor:pointer" :body-style="{ padding: '0px' }">
                 <img
+                  @click="toMainFirm(item.cid)"
                   src="https:////www.lgstatic.com/thumbnail_160x160/i/image2/M01/8D/84/CgotOVubY2uAQ2pWAAIHadcTOGA593.png"
                   class="image"
                 >
@@ -104,7 +105,7 @@
             <el-col :span="4" v-for="(o, index) in 4" :key="o" :offset="index > 0 ? 2 : 0">
               <el-card :body-style="{ padding: '0px' }">
                 <img
-                  src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+                  src="https:////www.lgstatic.com/thumbnail_160x160/i/image2/M01/8D/84/CgotOVubY2uAQ2pWAAIHadcTOGA593.png"
                   class="image"
                 >
                 <div style="padding: 14px;">
@@ -121,8 +122,7 @@
             <el-col :span="4" v-for="(o, index) in 4" :key="o" :offset="index > 0 ? 2 : 0">
               <el-card :body-style="{ padding: '0px' }">
                 <img
-                  src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                  class="image"
+                  src="https:////www.lgstatic.com/thumbnail_160x160/i/image2/M01/8D/84/CgotOVubY2uAQ2pWAAIHadcTOGA593.png"
                 >
                 <div style="padding: 14px;">
                   <span>好吃的汉堡</span>
@@ -167,6 +167,10 @@ export default {
     }
   },
   methods: {
+    toMainFirm: function(id) {
+      console.log("xxxxx");
+      this.$router.push({ path: "/mainFirm/" + id });
+    },
     gotoInfo: function() {
       this.$router.push({ path: "/userInfo" });
     },
