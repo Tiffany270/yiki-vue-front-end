@@ -78,6 +78,7 @@
     </div>
 
     <el-main class="main-wrapper">
+      <!--====热门公司开始===== -->
       <el-tabs class="panel-wrapper" v-model="activeName">
         <el-tab-pane label="热门公司" name="first">
           <el-row>
@@ -99,36 +100,17 @@
           </el-row>
         </el-tab-pane>
       </el-tabs>
+      <!--====热门职位开始===== -->
+
       <el-tabs class="panel-wrapper" v-model="activeName">
         <el-tab-pane label="热门职位" name="first">
           <el-row>
-            <el-col :span="4" v-for="(o, index) in 4" :key="o" :offset="index > 0 ? 2 : 0">
-              <el-card :body-style="{ padding: '0px' }">
-                <img
-                  src="https:////www.lgstatic.com/thumbnail_160x160/i/image2/M01/8D/84/CgotOVubY2uAQ2pWAAIHadcTOGA593.png"
-                  class="image"
-                >
-                <div style="padding: 14px;">
-                  <span>好吃的汉堡</span>
+            <el-col :span="4" v-for="(item) in JDlistData" :key="item.jid" :offset=" 1 ">
+              <el-card style="cursor: pointer">
+                <div @click="toMainJD(item.jid)" style="padding: 14px;">
+                  <span>{{item.opc}}</span>
                   <div class="bottom clearfix">
-                    <time class="time">{{ currentDate }}</time>
-                    <el-button type="text" class="button">操作按钮</el-button>
-                  </div>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="4" v-for="(o, index) in 4" :key="o" :offset="index > 0 ? 2 : 0">
-              <el-card :body-style="{ padding: '0px' }">
-                <img
-                  src="https:////www.lgstatic.com/thumbnail_160x160/i/image2/M01/8D/84/CgotOVubY2uAQ2pWAAIHadcTOGA593.png"
-                >
-                <div style="padding: 14px;">
-                  <span>好吃的汉堡</span>
-                  <div class="bottom clearfix">
-                    <time class="time">{{ currentDate }}</time>
-                    <el-button type="text" class="button">操作按钮</el-button>
+                    <time class="time">{{item.pay }}</time>
                   </div>
                 </div>
               </el-card>
@@ -156,23 +138,34 @@ export default {
         "https://sxsimg.xiaoyuanzhao.com/7B/A2/7B3B8852D5C258D7AD364FE175CE56A2.png"
       ],
       firmInfoListData: null,
+      JDlistData: null,
       name: "",
       msg: "Welcome to Your Vue.js App",
-      input: ""
+      input: "",
+      auth: null
     };
   },
   created() {
     if (localStorage.getItem("auth") !== null) {
-      this.name = JSON.parse(localStorage.getItem("auth")).name;
+      this.auth = JSON.parse(localStorage.getItem("auth"));
+      this.name = this.auth.name;
     }
   },
   methods: {
     toMainFirm: function(id) {
-      console.log("xxxxx");
       this.$router.push({ path: "/mainFirm/" + id });
     },
+    toMainJD: function(id) {
+      this.$router.push({ path: "/mainJD/" + id });
+    },
     gotoInfo: function() {
-      this.$router.push({ path: "/userInfo" });
+      if (this.auth.auth === 1) {
+        //企业
+        this.$router.push({ path: "/about" });
+      }
+      if (this.auth.auth === 0) {
+        this.$router.push({ path: "/detail" });
+      }
     },
     getAllFirmInfo: function() {
       this.axios({
@@ -181,11 +174,20 @@ export default {
       }).then(x => {
         this.firmInfoListData = x.data;
       });
+    },
+    getAllJD: function() {
+      this.axios({
+        method: "get",
+        url: "/allJD"
+      }).then(x => {
+        this.JDlistData = x.data;
+      });
     }
   },
   mounted() {
     setTimeout(() => {
       this.getAllFirmInfo();
+      this.getAllJD();
     }, 0);
   }
 };

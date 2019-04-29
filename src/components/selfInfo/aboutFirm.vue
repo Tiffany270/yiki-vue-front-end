@@ -7,22 +7,13 @@
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!name" class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">登录</router-link>
-          </a>
-        </div>
-        <div v-if="name" class="grid-content bg-purple">
-          <a @click="gotoResume">我的简历</a>
+        <div class="grid-content bg-purple">
+          <el-button icon="el-icon-edit" 
+          @click="edit" type="info" circle></el-button>
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!name" class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">注册</router-link>
-          </a>
-        </div>
-        <div v-if="name" class="grid-content bg-purple">
+        <div class="grid-content bg-purple">
           <a>
             <router-link to="/auth">退出</router-link>
           </a>
@@ -148,6 +139,9 @@ export default {
     }
   },
   methods: {
+    edit() {
+      this.$router.push({ path: "/firmInfo" });
+    },
     handleChange(val) {
       console.log(val);
     },

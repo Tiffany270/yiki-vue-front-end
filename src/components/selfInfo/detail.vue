@@ -1,28 +1,19 @@
 <template>
   <el-container>
-    <el-row class="top-bar" :gutter="20">
+      <el-row class="top-bar" :gutter="20">
       <el-col :span="20">
         <div class="grid-content bg-purple">
           <h2>个人中心</h2>
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!name" class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">登录</router-link>
-          </a>
-        </div>
-        <div v-if="name" class="grid-content bg-purple">
-          <a @click="gotoResume">我的简历</a>
+        <div class="grid-content bg-purple">
+          <el-button icon="el-icon-edit" 
+          @click="edit" type="info" circle></el-button>
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!name" class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">注册</router-link>
-          </a>
-        </div>
-        <div v-if="name" class="grid-content bg-purple">
+        <div class="grid-content bg-purple">
           <a>
             <router-link to="/auth">退出</router-link>
           </a>
@@ -142,7 +133,7 @@ export default {
         this.resumeData = x.data;
       });
     },
-    gotoResume: function() {
+    edit: function() {
       this.$router.push({ path: "/myResume" });
     },
     handleOpen(key, keyPath) {
