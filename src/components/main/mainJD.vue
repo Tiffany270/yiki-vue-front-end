@@ -7,22 +7,22 @@
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!authname" class="grid-content bg-purple">
+        <div v-if="!auth" class="grid-content bg-purple">
           <a>
             <router-link to="/auth">登录</router-link>
           </a>
         </div>
-        <div v-if="authname" class="grid-content bg-purple">
+        <div v-if="auth" class="grid-content bg-purple">
           <a @click="gotoResume">我的简历</a>
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!authname" class="grid-content bg-purple">
+        <div v-if="!auth" class="grid-content bg-purple">
           <a>
             <router-link to="/auth">注册</router-link>
           </a>
         </div>
-        <div v-if="authname" class="grid-content bg-purple">
+        <div v-if="auth" class="grid-content bg-purple">
           <a>
             <router-link to="/auth">退出</router-link>
           </a>
@@ -31,86 +31,35 @@
     </el-row>
     <!-- 上方需要保留 -->
 
-    <div v-if="data" class="main-wrapper">
+    <div v-if="JDdatalist" class="main-wrapper">
       <div class="main-header">
         <el-row>
           <el-col :span="6">
             <div class="center">
-              <el-button plain>投递简历</el-button>
-            
+              <el-button v-if="alreadypost" type="success" plain disabled>已投递</el-button>
+              <el-button v-if="!alreadypost" @click="makesurePost" plain>投递简历</el-button>
             </div>
           </el-col>
           <el-col :span="18">
             <div class="main-header-right-block">
-              <div>{{data.opc}}</div>
+              <div>{{JDdatalist.opc}}</div>
             </div>
             <div class="main-header-right-block" style="font-size:15px;">
-              <div>{{data.intro}}</div>
+              <div>{{JDdatalist.tab}}</div>
             </div>
           </el-col>
         </el-row>
       </div>
-      <div class="main-content">
-        <el-tabs v-model="activeName" type="card">
-          <el-tab-pane class="main-wrapper" label="职位详情" name="first">
-            <el-row>
-              <el-col :span="18">
-                <div class="right-block">
-                  <div class="title">公司介绍</div>
-                  <div class="text">{{data.brief}}</div>
-                </div>
-              </el-col>
-              <el-col :span="6">
-                <el-card class="box-card">
-                  <div slot="header" class="clearfix">
-                    <div class="title">公司详情</div>
-                  </div>
-                  <div class="right-block">
-                    <div class="title">
-                      <el-tag type="info">类型</el-tag>
-                      {{data.type}}
-                    </div>
-                  </div>
-                  <div class="right-block">
-                    <div class="title">
-                      <el-tag type="info">规模</el-tag>
-                      {{data.num}}
-                    </div>
-                  </div>
-                  <div class="right-block">
-                    <div class="title">
-                      <el-tag type="info">所在地</el-tag>
-                      {{data.region}}
-                    </div>
-                  </div>
-                </el-card>
-              </el-col>
-            </el-row>
-          </el-tab-pane>
-          <el-tab-pane label="常见问题" name="fourth">
-            <el-collapse v-model="activeNames" @change="handleChange">
-              <el-collapse-item title="一致性 Consistency" name="1">
-                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-              </el-collapse-item>
-              <el-collapse-item title="反馈 Feedback" name="2">
-                <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-                <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-              </el-collapse-item>
-              <el-collapse-item title="效率 Efficiency" name="3">
-                <div>简化流程：设计简洁直观的操作流程；</div>
-                <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-                <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-              </el-collapse-item>
-              <el-collapse-item title="可控 Controllability" name="4">
-                <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-                <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
-              </el-collapse-item>
-            </el-collapse>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+      <div class="main-content"></div>
     </div>
+
+    <el-dialog title="提示" :visible.sync="okdialog" width="30%" :before-close="handleClose">
+      <span>确认投递该职位？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="okdialog = false">取 消</el-button>
+        <el-button type="primary" @click="postResume">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <el-header class="header-wrapper">@yiki.com</el-header>
   </el-container>
@@ -123,14 +72,15 @@ export default {
   name: "mainJD",
   data() {
     return {
+      alreadypost: false,
+      okdialog: false,
       activeNames: ["1"],
       activeName: "first",
       auth: null,
-      authname: null,
       msg: "Welcome to Your Vue.js App",
       input: "",
       fid: null,
-      data: null
+      JDdatalist: null
     };
   },
   created() {
@@ -144,11 +94,15 @@ export default {
     },
     getJDdata: function() {
       this.axios({
-        method: "get",
+        method: "GET",
         url: "/JD/" + this.$route.params.id
-      }).then(x => {
-        this.data = x.data;
-      });
+      })
+        .then(x => {
+          this.JDdatalist = x.data;
+        })
+        .catch(error => {
+          this.$message.error("网络错误");
+        });
     },
     gotoResume: function() {
       this.$router.push({ path: "/myResume" });
@@ -156,13 +110,73 @@ export default {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    handleClose(done) {
+      this.$confirm("确认投递？")
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
+    makesurePost() {
+      if (!this.auth) {
+        this.$message.error("请先登录");
+      } else {
+        this.okdialog = true;
+      }
+    },
+
+    postResume() {
+      this.submitResume();
+      this.okdialog = false;
+    },
+    submitResume() {
+      this.axios({
+        method: "post",
+        url: "/send/",
+        data: {
+          uid: this.auth.id,
+          cid: this.JDdatalist.cid,
+          jid: this.$route.params.id,
+          replay: -1
+        }
+      })
+        .then(x => {
+          console.log(x, typeof x);
+          if (x.data === 1) {
+            this.$message.success("投递成功");
+          } else {
+            this.$message.error("投递失败;或许您已经投递过了");
+          }
+        })
+        .catch(error => {
+          this.$message.error("网络错误");
+        });
+    },
+    checkAlredyPost() {
+      this.axios({
+        method: "post",
+        url: "/checkPost",
+        data: {
+          uid: parseInt(this.auth.id),
+          jid: parseInt(this.$route.params.id)
+        }
+      })
+        .then(x => {
+          if (x.data === 1) {
+            this.alreadypost = true;
+          } else {
+            this.alreadypost = false;
+          }
+        })
+        .catch(error => {
+          this.$message.error("网络错误");
+        });
     }
   },
   mounted() {
     setTimeout(() => {
       this.getJDdata();
+      this.checkAlredyPost();
     }, 0);
   }
 };
@@ -173,9 +187,9 @@ export default {
 <style lang="scss" scoped>
 .main-header {
   height: 200px;
-  width: 100%;
+  width: 80%;
   background: #3a4858;
-
+  margin: auto;
   .main-header-right-block {
     color: white;
     font-weight: bold;
@@ -193,6 +207,9 @@ export default {
 }
 .main-content {
   height: 600px;
+  width: 80%;
+  border: #d3dce6 1px solid;
+  margin: auto;
 }
 .text {
   font-size: 16px;

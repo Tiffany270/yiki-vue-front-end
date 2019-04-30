@@ -50,7 +50,6 @@ export default {
   },
   methods: {
     auth: function(event) {
-      console.log(this.formLabelAlign);
       this.axios({
         method: "post",
         url: "authUser",

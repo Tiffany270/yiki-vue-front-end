@@ -106,11 +106,21 @@
         <el-tab-pane label="热门职位" name="first">
           <el-row>
             <el-col :span="4" v-for="(item) in JDlistData" :key="item.jid" :offset=" 1 ">
-              <el-card style="cursor: pointer">
+              <el-card
+              class="padding-enable"
+               style="cursor: pointer">
                 <div @click="toMainJD(item.jid)" style="padding: 14px;">
-                  <span>{{item.opc}}</span>
-                  <div class="bottom clearfix">
-                    <time class="time">{{item.pay }}</time>
+                  <div class="inline">
+                    <div style="width:100px">
+                      <h2>{{item.opc}}</h2>
+                    </div>
+                    <div class="pay">{{item.pay}}</div>
+                  </div>
+                  <div class="inline">
+                    <span style="color:#808080">[{{item.relDate}}]</span>
+                  </div>
+                  <div class="inline">
+                    <span style="color:#808080">{{item.type}}/{{item.location}}/{{item.exp}}</span>                    
                   </div>
                 </div>
               </el-card>
@@ -196,6 +206,21 @@ export default {
 
 
 <style lang="scss" scoped>
+.inline {
+  position: relative;
+  height: 20px;
+}
+.pay {
+  right: 0;
+  top: 0;
+  position: absolute;
+  font-size: 16px;
+  color: #fa6041;
+}
+.padding-enable{
+  padding: 0;
+}
+
 .main-wrapper {
   padding: 2% 4% 2% 4%;
 }
