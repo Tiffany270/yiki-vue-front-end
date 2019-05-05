@@ -8,8 +8,7 @@
       </el-col>
       <el-col :span="2">
         <div class="grid-content bg-purple">
-          <el-button icon="el-icon-edit" 
-          @click="edit" type="info" circle></el-button>
+          <el-button icon="el-icon-edit" @click="edit" type="info" circle></el-button>
         </div>
       </el-col>
       <el-col :span="2">
@@ -22,7 +21,7 @@
     </el-row>
     <!-- 上方需要保留 -->
 
-    <div class="main-wrapper">
+    <div v-if="data&&sendList" class="main-wrapper">
       <div class="main-header">
         <el-row>
           <el-col :span="6">
@@ -85,33 +84,125 @@
               <div class="text">{{data.email}}</div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="在招职位" name="third">在招职位</el-tab-pane>
-          <el-tab-pane label="常见问题" name="fourth">
-            <el-collapse v-model="activeNames" @change="handleChange">
-              <el-collapse-item title="一致性 Consistency" name="1">
-                <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-              </el-collapse-item>
-              <el-collapse-item title="反馈 Feedback" name="2">
-                <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-                <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-              </el-collapse-item>
-              <el-collapse-item title="效率 Efficiency" name="3">
-                <div>简化流程：设计简洁直观的操作流程；</div>
-                <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-                <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-              </el-collapse-item>
-              <el-collapse-item title="可控 Controllability" name="4">
-                <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-                <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
-              </el-collapse-item>
-            </el-collapse>
+          <el-tab-pane label="在招职位" name="third">
+            <div v-if="!AllJDlist">
+              还没有招聘信息？
+              <el-button type="info" @click="JDdialogVisible = true">创建招聘信息</el-button>
+            </div>
+
+            <el-table :data="AllJDlist" style="width: 100%">
+              <el-table-column label="ID" width="180">
+                <template slot-scope="scope">
+                  <i class="el-icon-time"></i>
+                  <span style="margin-left: 10px">{{ scope.row.relDate }}</span>
+                  <span style="margin-left: 10px">{{ scope.row.jid }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="职位名称" width="180">
+                <template slot-scope="scope">
+                  <p>{{ scope.row.opc }}</p>
+                  <el-popover trigger="hover" placement="top">
+                    <p>{{ scope.row.location }}</p>
+                    <div slot="reference" class="name-wrapper">
+                      <el-tag size="medium">{{ scope.row.tab }}</el-tag>
+                    </div>
+                  </el-popover>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                  <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete(scope.$index, scope.row)"
+                  >删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <el-button type="info" @click="JDdialogVisible = true">新增招聘信息</el-button>
+          </el-tab-pane>
+          <el-tab-pane label="投递情况" name="fourth">
+            <el-table :data="sendList" style="width: 100%">
+              <el-table-column prop="id" label="id" width="180"></el-table-column>
+              <el-table-column prop="uname" label="投递人" width="180"></el-table-column>
+              <el-table-column prop="jname" label="投递职位" width="180"></el-table-column>
+              <el-table-column prop="replay" label="状态" width="180"></el-table-column>
+              <el-table-column label="Action">
+                <template slot-scope="scope">
+                  <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+                  <el-button type="text" size="small">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-tab-pane>
         </el-tabs>
       </div>
     </div>
 
     <el-header class="header-wrapper">@yiki.com</el-header>
+    <el-dialog title="详情" :visible.sync="dialogVisible" width="80%" :before-close="handleClose">
+      <el-row>
+        <el-col :span="12">
+          <div class="grid-content bg-purple">
+            <h1>求职者信息</h1>
+            <div v-if="userReusmeData">姓名：{{userReusmeData.resume.name}}</div>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="grid-content bg-purple-light">
+            <h1>职位信息</h1>
+            <div v-if="JDData">{{JDData.opc}}</div>
+          </div>
+        </el-col>
+      </el-row>
+      <h4>----------------------------------------------------------------------------------------------------------------------------------------</h4>
+      <el-button type="success" @click="sendInterview" plain>发送面试邀请</el-button>
+      <el-button type="info" @click="refuseInterview" plain>拒绝</el-button>
+    </el-dialog>
+
+    <el-dialog title="新增JD" :visible.sync="JDdialogVisible" width="80%" :before-close="handleClose">
+      <el-form ref="JDform" :model="JDform" label-width="80px">
+        <el-form-item label="职位名称">
+          <el-input v-model="JDform.opc"></el-input>
+        </el-form-item>
+        <el-form-item label="职业类型">
+          <el-input v-model="JDform.tab"></el-input>
+        </el-form-item>
+        <el-form-item label="经验限制">
+          <el-input v-model="JDform.exp"></el-input>
+        </el-form-item>
+        <el-form-item label="学历">
+          <el-select v-model="JDform.degree" placeholder="请选择">
+            <el-option label="本科" value="本科"></el-option>
+            <el-option label="研究生" value="研究生"></el-option>
+            <el-option label="博士" value="博士"></el-option>
+            <el-option label="其他" value="其他"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职业类型">
+          <el-select v-model="JDform.type" placeholder="请选择">
+            <el-option label="全职" value="全职"></el-option>
+            <el-option label="实习" value="实习"></el-option>
+            <el-option label="兼职" value="兼职"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="吸引词">
+          <el-input v-model="JDform.attr"></el-input>
+        </el-form-item>
+        <el-form-item label="职业描述">
+          <el-input type="textarea" v-model="JDform.intro"></el-input>
+        </el-form-item>
+        <el-form-item label="公司名称">
+          <el-input v-model="JDform.cname"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="sureButton">立即创建</el-button>
+          <el-button @click="JDdialogVisible=false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -122,14 +213,37 @@ export default {
   name: "aboutFirm",
   data() {
     return {
+      sendList: null,
       activeNames: ["1"],
-      activeName: "first",
+      activeName: "fourth",
       auth: null,
       name: "",
       msg: "Welcome to Your Vue.js App",
       input: "",
       fid: null,
-      data: null
+      data: null,
+      dialogVisible: false,
+      JDdialogVisible: false,
+      userReusmeData: null,
+      JDData: null,
+      currentSendId: null,
+      AllJDlist: null,
+      JDform: {
+        cid: null,
+        opc: "",
+        tab: "",
+        pay: "",
+        location: "",
+        exp: "",
+        degree: "",
+        type: "",
+        attr: "",
+        intro: "",
+        intv: "",
+        endDate: "",
+        relDate: "",
+        cname: ""
+      }
     };
   },
   created() {
@@ -139,6 +253,115 @@ export default {
     }
   },
   methods: {
+    //---对JD的操作
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    sureButton() {
+      this.JDform.cid = this.fid;
+      this.axios({
+        method: "post",
+        url: "/JD/",
+        data: this.JDform
+      })
+        .then(response => {
+          if (response.data === 1) {
+            this.$message("成功");
+            this.JDdialogVisible = false;
+            this.getJDforCdata();
+          } else {
+            this.$message.error("失败");
+          }
+        })
+        .catch(error => {
+          this.$message.error("网络错误");
+        });
+    },
+    getJDforCdata: function() {
+      this.axios({
+        method: "get",
+        url: "/JDbyC/" + this.fid
+      }).then(x => {
+        this.AllJDlist = x.data;
+      });
+    },
+
+    //----对投递信息的操作
+    sendInterview() {
+      this.axios({
+        method: "put",
+        url: "/replay/" + this.currentSendId,
+        data: {
+          replay: 2
+        }
+      }).then(x => {
+        this.userReusmeData = x.data;
+        this.$message({
+          message: "已成功发送面试邀请",
+          type: "success"
+        });
+      });
+    },
+    refuseInterview() {
+      this.$message({
+        message: "已发送拒绝信",
+        type: "warning"
+      });
+    },
+
+    handleClick(row) {
+      this.dialogVisible = true;
+      this.getUserResumeData(row.uid);
+      this.getJDforUserData(row.jid);
+      this.currentSendId = row.id;
+    },
+    //---点击获取当前投递者的信息
+    getUserResumeData: function(uid) {
+      this.axios({
+        method: "get",
+        url: "/resume/" + uid
+      }).then(x => {
+        this.userReusmeData = x.data;
+      });
+    },
+    //---点击获取当前投递者所投岗位的信息
+    getJDforUserData: function(jid) {
+      this.axios({
+        method: "get",
+        url: "/JD/" + jid
+      }).then(x => {
+        this.JDData = x.data;
+      });
+    },
+
+    //----当前页面公司的所有投递信息
+    getSendData: function() {
+      this.axios({
+        method: "get",
+        url: "/send/" + this.fid
+      }).then(x => {
+        this.sendList = x.data;
+        this.sendList.forEach(el => {
+          switch (el.replay) {
+            case -1:
+              el.replay = "未查看";
+              break;
+            case 0:
+              el.replay = "已查看";
+              break;
+            case 1:
+              el.replay = "面试";
+              break;
+            case 2:
+              el.replay = "已拒绝";
+              break;
+          }
+        });
+      });
+    },
     edit() {
       this.$router.push({ path: "/firmInfo" });
     },
@@ -159,13 +382,15 @@ export default {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    handleClose(done) {
+      this.dialogVisible = false;
     }
   },
   mounted() {
     setTimeout(() => {
       this.getResumeData();
+      this.getSendData();
+      this.getJDforCdata();
     }, 0);
   }
 };

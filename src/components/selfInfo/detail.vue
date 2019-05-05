@@ -1,6 +1,6 @@
 <template>
   <el-container>
-      <el-row class="top-bar" :gutter="20">
+    <el-row class="top-bar" :gutter="20">
       <el-col :span="20">
         <div class="grid-content bg-purple">
           <h2>个人中心</h2>
@@ -8,15 +8,12 @@
       </el-col>
       <el-col :span="2">
         <div class="grid-content bg-purple">
-          <el-button icon="el-icon-edit" 
-          @click="edit" type="info" circle></el-button>
+          <el-button icon="el-icon-edit" @click="edit" type="info" circle></el-button>
         </div>
       </el-col>
       <el-col :span="2">
         <div class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">退出</router-link>
-          </a>
+          <a @click="quit">退出</a>
         </div>
       </el-col>
     </el-row>
@@ -30,63 +27,53 @@
 
       <el-row v-if="resumeData">
         <!-- 左 -->
-        <el-col :span="8">
-          <div class="grid-content bg-purple">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>求职意向</span>
-                <el-button style="float: right; padding: 3px 0" type="text">Edit</el-button>
-              </div>
-              <div v-for="o in 2" :key="o" class="text item">{{'列表内容 ' + o }}</div>
-            </el-card>
+        <el-col :span="16">
+          <div class="grid-content bg-purple"></div>
 
-            <el-menu
-              default-active="2"
-              class="el-menu-vertical-demo"
-              @open="handleOpen"
-              @close="handleClose"
-            >
-              <el-submenu index="1">
-                <template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>导航一</span>
-                </template>
-                <el-menu-item-group>
-                  <template slot="title">分组一</template>
-                  <el-menu-item index="1-1">选项1</el-menu-item>
-                  <el-menu-item index="1-2">选项2</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group title="分组2">
-                  <el-menu-item index="1-3">选项3</el-menu-item>
-                </el-menu-item-group>
-                <el-submenu index="1-4">
-                  <template slot="title">选项4</template>
-                  <el-menu-item index="1-4-1">选项1</el-menu-item>
-                </el-submenu>
-              </el-submenu>
-              <el-menu-item index="2">
-                <i class="el-icon-menu"></i>
-                <span slot="title">导航二</span>
-              </el-menu-item>
-              <el-menu-item index="3">
-                <i class="el-icon-document"></i>
-                <span slot="title">导航三</span>
-              </el-menu-item>
-              <el-menu-item index="4">
-                <i class="el-icon-setting"></i>
-                <span slot="title">导航四</span>
-              </el-menu-item>
-            </el-menu>
+          <div style="margin-top:30px">
+            <el-tabs :tab-position="tabPosition" style="height: 200px;">
+              <el-tab-pane label="投递情况">
+                <el-table :data="sendList" style="width: 100%">
+                  <el-table-column prop="id" label="id" width="180"></el-table-column>
+                  <el-table-column prop="uname" label="投递人" width="180"></el-table-column>
+                  <el-table-column prop="jname" label="投递职位" width="180"></el-table-column>
+                  <el-table-column prop="replay" label="状态" width="180"></el-table-column>
+                  <el-table-column label="Action">
+                    <template slot-scope="scope">
+                      <el-button @click="handleClick(scope.row)" type="text" size="small">查看详情</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-tab-pane>
+              <el-tab-pane label="其他">配置管理</el-tab-pane>
+            </el-tabs>
           </div>
         </el-col>
         <!-- 右 -->
-        <el-col :span="16">
+
+        <el-col :span="8">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <span>求职意向</span>
+              <el-button style="float: right; padding: 3px 0" type="text">Edit</el-button>
+            </div>
+            <div>地点：{{resumeData.resume.region}}</div>
+            <div>薪资范围：{{resumeData.resume.pay}}</div>
+            <div>期望职位：{{resumeData.resume.occpation}}</div>
+          </el-card>
           <div class="main-wrapper">
             <div class="right-block">
               <div class="title">教育经历</div>
             </div>
             <div class="right-block">
               <div class="title">工作经历</div>
+
+              <div class="text" :key="item.id" v-for="item in resumeData.workExps">
+                {{item.opcDate}}
+                {{item.dep}}
+                {{item.ocp}}
+                {{item.type}}
+              </div>
             </div>
           </div>
         </el-col>
@@ -104,6 +91,8 @@ export default {
   name: "detail",
   data() {
     return {
+      sendList: null,
+      tabPosition: "left",
       resumeData: null,
       currentDate: "xxx",
       activeName: "first",
@@ -116,12 +105,13 @@ export default {
       name: "",
       msg: "Welcome to Your Vue.js App",
       input: "",
-      uid: 2
+      uid: null
     };
   },
   created() {
     if (localStorage.getItem("auth") !== null) {
       this.name = JSON.parse(localStorage.getItem("auth")).name;
+      this.uid = JSON.parse(localStorage.getItem("auth")).id;
     }
   },
   methods: {
@@ -141,11 +131,49 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    //----当前页面公司的所有投递信息
+    getSendData: function() {
+      this.axios({
+        method: "get",
+        url: "/sendbyUser/" + this.uid
+      }).then(x => {
+        this.sendList = x.data;
+        this.sendList.forEach(el => {
+          switch (el.replay) {
+            case -1:
+              el.replay = "未查看";
+              break;
+            case 0:
+              el.replay = "已查看";
+              break;
+            case 1:
+              el.replay = "面试";
+              break;
+            case 2:
+              el.replay = "已拒绝";
+              break;
+          }
+        });
+      });
+    },
+
+    //---退出
+    quit() {
+      localStorage.clear();
+      this.$message({
+        message: "已退出...即将跳转",
+        type: "success"
+      });
+      setTimeout(() => {
+        this.$router.push({ path: "/" });
+      }, 3000);
     }
   },
   mounted() {
     setTimeout(() => {
       this.getResumeData();
+      this.getSendData();
     }, 0);
   }
 };
@@ -159,8 +187,8 @@ export default {
   font-weight: bold;
 }
 .right-block {
-     width: 500px;
-    height: 140px;
+  width: 500px;
+  height: 140px;
 }
 .main-wrapper {
   padding: 2% 4% 2% 4%;
@@ -204,6 +232,9 @@ img {
 .search {
   padding: 2%;
   background: gainsboro;
+}
+.text {
+  font-size: 20px;
 }
 </style>
 

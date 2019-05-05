@@ -50,7 +50,13 @@
           </el-col>
         </el-row>
       </div>
-      <div class="main-content"></div>
+      <div class="main-content">
+        薪资：{{JDdatalist.pay}}
+        薪资：{{JDdatalist.exp}}
+        薪资：{{JDdatalist.location}}
+        薪资：{{JDdatalist.type}}
+
+      </div>
     </div>
 
     <el-dialog title="提示" :visible.sync="okdialog" width="30%" :before-close="handleClose">
@@ -135,8 +141,10 @@ export default {
         url: "/send/",
         data: {
           uid: this.auth.id,
+          uname:this.auth.name,
           cid: this.JDdatalist.cid,
           jid: this.$route.params.id,
+          jname:this.JDdatalist.opc,
           replay: -1
         }
       })

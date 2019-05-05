@@ -252,8 +252,6 @@ export default {
     },
     //确认dialog里的最终确定提交
     submit() {
-      
-
       this.submitDialog = false;
       this.active = 3;
     },
