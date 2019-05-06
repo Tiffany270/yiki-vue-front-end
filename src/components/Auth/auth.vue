@@ -17,7 +17,7 @@
                 <time class="time">
                   <router-link to="/uregiste">点击注册</router-link>
                 </time>
-                <el-button type="text" class="button">返回</el-button>
+                <el-button @click="back" type="text" class="button">返回</el-button>
               </div>
             </div>
           </el-card>
@@ -39,7 +39,7 @@
                 <time class="time">
                   <router-link to="/fregiste">点击注册</router-link>
                 </time>
-                <el-button type="text" class="button">返回</el-button>
+                <el-button @click="back" type="text" class="button">返回</el-button>
               </div>
             </div>
           </el-card>
@@ -63,6 +63,12 @@ export default {
         type: ""
       }
     };
+  },
+  methods: {
+    //----返回
+    back() {
+      this.$router.back(-1);
+    }
   }
 };
 </script>

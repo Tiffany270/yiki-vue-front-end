@@ -13,7 +13,7 @@
           </a>
         </div>
         <div v-if="name" class="grid-content bg-purple">
-          <a @click="gotoInfo">welcome!!!</a>
+          <a @click="gotoInfo">welcome!!!{{name}}</a>
         </div>
       </el-col>
       <el-col :span="2">
@@ -23,9 +23,7 @@
           </a>
         </div>
         <div v-if="name" class="grid-content bg-purple">
-          <a>
-            <router-link to="/auth">退出</router-link>
-          </a>
+          <a @click="quit">退出</a>
         </div>
       </el-col>
     </el-row>
@@ -36,6 +34,14 @@
         <el-input v-model="input" placeholder="搜索一下"></el-input>
       </el-col>
       <el-col :span="6">
+        <el-select v-model="value" filterable placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
         <el-button type="info">search</el-button>
       </el-col>
     </el-row>
@@ -106,9 +112,7 @@
         <el-tab-pane label="热门职位" name="first">
           <el-row>
             <el-col :span="4" v-for="(item) in JDlistData" :key="item.jid" :offset=" 1 ">
-              <el-card
-              class="padding-enable"
-               style="cursor: pointer">
+              <el-card class="padding-enable" style="cursor: pointer">
                 <div @click="toMainJD(item.jid)" style="padding: 14px;">
                   <div class="inline">
                     <div style="width:100px">
@@ -120,7 +124,7 @@
                     <span style="color:#808080">[{{item.relDate}}]</span>
                   </div>
                   <div class="inline">
-                    <span style="color:#808080">{{item.type}}/{{item.location}}/{{item.exp}}</span>                    
+                    <span style="color:#808080">{{item.type}}/{{item.location}}/{{item.exp}}</span>
                   </div>
                 </div>
               </el-card>
@@ -139,6 +143,21 @@ export default {
   name: "webMain",
   data() {
     return {
+      options: [
+        {
+          value: "职位",
+          label: "职位"
+        },
+        {
+          value: "公司",
+          label: "公司"
+        },
+        {
+          value: "行业",
+          label: "行业"
+        }
+      ],
+      value: "职位",
       currentDate: "xxx",
       activeName: "first",
       bannerimgurls: [
@@ -162,6 +181,17 @@ export default {
     }
   },
   methods: {
+    //---退出
+    quit() {
+      localStorage.clear();
+      this.$message({
+        message: "已退出...",
+        type: "success"
+      });
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    },
     toMainFirm: function(id) {
       this.$router.push({ path: "/mainFirm/" + id });
     },
@@ -217,7 +247,7 @@ export default {
   font-size: 16px;
   color: #fa6041;
 }
-.padding-enable{
+.padding-enable {
   padding: 0;
 }
 

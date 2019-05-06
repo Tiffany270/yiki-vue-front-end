@@ -28,6 +28,9 @@
             新用户？
             <router-link to="/fregiste">点击注册</router-link>
           </div>
+          <div>
+            <el-button @click="back" type="text" class="button">返回</el-button>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -49,6 +52,10 @@ export default {
     };
   },
   methods: {
+    //----返回
+    back() {
+      this.$router.back(-1);
+    },
     test: function(event) {
       console.log(this.formLabelAlign);
       this.axios({

@@ -8,6 +8,9 @@ import uregiste from '@/components/Auth/userAuth/userregiste'
 import userResume from '@/components/postinfo/userResume'
 import firmInfo from '@/components/postinfo/firmInfo'
 
+import searchPage from '@/components/search/searchPage'
+
+
 import aboutFirm from '@/components/selfInfo/aboutFirm'
 import detail from '@/components/selfInfo/detail'
 
@@ -48,6 +51,12 @@ const routes = [{
   path: '/',
   name: 'webMain',
   component: webMain
+},
+//----点击搜索
+{
+  path: '/search/:ele',
+  name: 'search',
+  component: searchPage
 },
 ///----------是post资料的跳转表单
 {

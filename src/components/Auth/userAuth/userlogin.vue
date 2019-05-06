@@ -26,7 +26,10 @@
         <el-col :span="8" id="right">
           <div>
             新用户？
-            <router-link to="/registe">点击注册</router-link>
+            <router-link to="/uregiste">点击注册</router-link>
+          </div>
+          <div>
+            <el-button @click="back" type="text" class="button">返回</el-button>
           </div>
         </el-col>
       </el-row>
@@ -76,6 +79,10 @@ export default {
         .catch(error => {
           this.$message.error("网络错误");
         });
+    },
+    //----返回
+    back() {
+      this.$router.back(-1);
     }
   }
 };

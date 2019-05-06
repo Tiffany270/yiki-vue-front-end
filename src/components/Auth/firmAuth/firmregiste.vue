@@ -10,17 +10,23 @@
             </h2>
           </el-row>
           <el-row class="form-wrapper">
-            <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-              <el-form-item label="名称">
+            <el-form
+              :rules="formrules"
+              ref="formLabelAlign"
+              :label-position="labelPosition"
+              label-width="80px"
+              :model="formLabelAlign"
+            >
+              <el-form-item label="名称" prop="cname">
                 <el-input v-model="formLabelAlign.cname"></el-input>
               </el-form-item>
-              <el-form-item label="公司名称">
+              <el-form-item label="公司名称" prop="clabelname">
                 <el-input v-model="formLabelAlign.clabelname"></el-input>
               </el-form-item>
-              <el-form-item label="邮箱">
+              <el-form-item label="邮箱" prop="cemail">
                 <el-input v-model="formLabelAlign.cemail"></el-input>
               </el-form-item>
-              <el-form-item label="密码">
+              <el-form-item label="密码" prop="password">
                 <el-input type="password" v-model="formLabelAlign.cpassword"></el-input>
               </el-form-item>
             </el-form>
@@ -33,6 +39,9 @@
           <div>
             已有账户？
             <router-link to="/fregiste">点击登录</router-link>
+          </div>
+          <div>
+            <el-button @click="back" type="text" class="button">返回</el-button>
           </div>
         </el-col>
       </el-row>
@@ -53,10 +62,55 @@ export default {
         cname: "",
         cemail: "",
         cpassword: ""
+      },
+      formrules: {
+        cname: [
+          { required: true, message: "请输入您的姓名", trigger: "blur" },
+          {
+            min: 1,
+            message: "不能为空",
+            trigger: "blur"
+          }
+        ],
+        clabelname: [
+          { required: true, message: "请输入您的姓名", trigger: "blur" },
+          {
+            min: 1,
+            message: "不能为空",
+            trigger: "blur"
+          }
+        ],
+        cemail: [
+          {
+            required: true, //是否必填
+            message: "请输入邮箱地址", //错误提示信息
+            trigger: "blur" //检验方式（blur为鼠标点击其他地方，）
+          },
+          {
+            type: "email", //要检验的类型（number，email，date等）
+            message: "请输入正确的邮箱地址",
+            trigger: ["blur", "change"]
+          }
+        ],
+        cpassword: [
+          {
+            required: true,
+            message: "请输入密码" //错误提示信息
+          },
+          {
+            min: 1,
+            message: "不能为空",
+            trigger: "blur"
+          }
+        ]
       }
     };
   },
   methods: {
+    //----返回
+    back() {
+      this.$router.back(-1);
+    },
     registe: function(event) {
       console.log(this.formLabelAlign.cname);
       this.axios({
