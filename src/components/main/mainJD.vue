@@ -2,8 +2,8 @@
   <el-container>
     <el-row class="top-bar" :gutter="20">
       <el-col :span="20">
-        <div class="grid-content bg-purple">
-          <h2>个人中心</h2>
+        <div class="pointer" @click="backToMain">
+          <h2>New for your life!</h2>
         </div>
       </el-col>
       <el-col :span="2">
@@ -24,7 +24,7 @@
         </div>
         <div v-if="auth" class="grid-content bg-purple">
           <a>
-            <router-link to="/auth">退出</router-link>
+            <a @click="quit">退出</a>
           </a>
         </div>
       </el-col>
@@ -35,9 +35,12 @@
       <div class="main-header">
         <el-row>
           <el-col :span="6">
-            <div class="center">
+            <div v-if="auth" class="center">
               <el-button v-if="alreadypost" type="success" plain disabled>已投递</el-button>
               <el-button v-if="!alreadypost" @click="makesurePost" plain>投递简历</el-button>
+            </div>
+            <div v-if="!auth" class="center">
+              <el-button type="primary" disabled>投递简历请先登录</el-button>
             </div>
           </el-col>
           <el-col :span="18">
@@ -45,17 +48,34 @@
               <div>{{JDdatalist.opc}}</div>
             </div>
             <div class="main-header-right-block" style="font-size:15px;">
-              <div>{{JDdatalist.tab}}</div>
+              <div>{{JDdatalist.tab}}/{{JDdatalist.pay}}/{{JDdatalist.location}}/{{JDdatalist.exp}}</div>
+              <div class="date">{{JDdatalist.relDate}}发布</div>
             </div>
           </el-col>
         </el-row>
       </div>
       <div class="main-content">
-        薪资：{{JDdatalist.pay}}
-        薪资：{{JDdatalist.exp}}
-        薪资：{{JDdatalist.location}}
-        薪资：{{JDdatalist.type}}
+        <div class="inline-block">
+          <h1>职位诱惑</h1>
+          <div class="content-text">{{JDdatalist.attr}}</div>
+        </div>
 
+        <div class="inline-block">
+          <h1>职位描述</h1>
+          <div class="content-text">{{JDdatalist.intro}}</div>
+        </div>
+        <div class="inline-block">
+          <h1>职位要求</h1>
+          <div class="content-text">{{JDdatalist.must}}</div>
+        </div>
+         <div class="inline-block">
+          <h1>公司福利</h1>
+          <div class="content-text">{{JDdatalist.hit}}</div>
+        </div>
+        <div class="inline-block">
+          <h1>面试地点</h1>
+          <div class="content-text">{{JDdatalist.intv}}</div>
+        </div>
       </div>
     </div>
 
@@ -95,6 +115,21 @@ export default {
     }
   },
   methods: {
+    //---退出
+    quit() {
+      localStorage.clear();
+      this.$message({
+        message: "已退出...",
+        type: "success"
+      });
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    },
+    //返回主页
+    backToMain() {
+      this.$router.push({ path: "/" });
+    },
     handleChange(val) {
       console.log(val);
     },
@@ -141,10 +176,10 @@ export default {
         url: "/send/",
         data: {
           uid: this.auth.id,
-          uname:this.auth.name,
+          uname: this.auth.name,
           cid: this.JDdatalist.cid,
           jid: this.$route.params.id,
-          jname:this.JDdatalist.opc,
+          jname: this.JDdatalist.opc,
           replay: -1
         }
       })
@@ -193,6 +228,9 @@ export default {
 
 
 <style lang="scss" scoped>
+.pointer {
+  cursor: pointer;
+}
 .main-header {
   height: 200px;
   width: 80%;
@@ -219,7 +257,20 @@ export default {
   border: #d3dce6 1px solid;
   margin: auto;
 }
+.inline-block {
+  padding: 1%;
+}
+.date {
+  padding-top: 10px;
+  font-size: 14px;
+  color: #999;
+}
 .text {
+  font-size: 16px;
+  line-height: 16px;
+}
+.content-text {
+  margin-top: 20px;
   font-size: 16px;
   line-height: 16px;
 }

@@ -7,7 +7,7 @@
         </div>
       </el-col>
       <el-col :span="2">
-        <div class="grid-content bg-purple">
+        <div v-if="resumeData">
           <el-button icon="el-icon-edit" @click="edit" type="info" circle></el-button>
         </div>
       </el-col>
@@ -22,7 +22,7 @@
     <div class="main-wrapper">
       <div v-if="!resumeData" style="width: 20%; margin: auto;">
         还没有你的简历~
-        <el-button type="primary">立即创建</el-button>
+        <el-button type="primary"  @click="edit" >立即创建</el-button>
       </div>
 
       <el-row v-if="resumeData">

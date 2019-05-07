@@ -6,6 +6,8 @@ import fregiste from '@/components/Auth/firmAuth/firmregiste'
 import ulogin from '@/components/Auth/userAuth/userlogin'
 import uregiste from '@/components/Auth/userAuth/userregiste'
 import userResume from '@/components/postinfo/userResume'
+import reeditResume from '@/components/postinfo/reeditResume'
+
 import firmInfo from '@/components/postinfo/firmInfo'
 
 import searchPage from '@/components/search/searchPage'
@@ -65,6 +67,13 @@ const routes = [{
   component: firmInfo
 },
 
+//-----update用
+{
+  path: '/reeditResume',
+  name: 'reeditResume',
+  component: reeditResume
+},
+//-----insert用
 {
   path: '/myResume',
   name: 'userResume',

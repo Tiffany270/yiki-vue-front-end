@@ -95,6 +95,8 @@
                 <span>{{item.name}}</span>
                 <span>{{item.opcdate}}</span>
                 <span>{{item.type}}行业</span>
+
+                <el-button style="float: right; padding: 3px 0" type="text">修改</el-button>
               </div>
               <div class="text item">
                 <div>在{{item.dep}}部门担任{{item.ocp}}职位</div>
@@ -108,7 +110,7 @@
 
         <el-tab-pane label="完成" name="five">
           <div style="width: 20%; margin: auto;">
-            <el-button type="primary" @click="beforesubmit">立即创建</el-button>
+            <el-button type="primary" @click="beforesubmit">修改</el-button>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -155,8 +157,8 @@
     </el-dialog>
 
     <!-- 提交确认弹窗 -->
-    <el-dialog title="确认提交" :visible.sync="submitDialog" width="30%" :before-close="handleClose">
-      <span>确认提交简历？</span>
+    <el-dialog title="确认修改" :visible.sync="submitDialog" width="30%" :before-close="handleClose">
+      <span>确认修改简历？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="unsubmit">取 消</el-button>
         <el-button type="primary" @click="submit">确 定</el-button>
@@ -167,7 +169,7 @@
 
 <script>
 export default {
-  name: "userResume",
+  name: "reeditResume",
   data() {
     return {
       auth: null,
@@ -250,6 +252,21 @@ export default {
     }
   },
   methods: {
+    //loadResumeDate，初始化数据
+    loadResumeDate() {
+      this.axios({
+        method: "get",
+        url: "/resume/" + this.auth.id
+      })
+        .then(x => {
+          this.ruleForm = x.data.resume;
+          this.workExpItems = x.data.workExps;
+        })
+        .catch(e => {
+          this.$message.error("网络错误");
+        });
+    },
+
     //---提交确认
     beforesubmit() {
       this.submitDialog = true;
@@ -341,6 +358,11 @@ export default {
         this.active = 1;
       }
     }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.loadResumeDate();
+    }, 0);
   }
 };
 </script>
