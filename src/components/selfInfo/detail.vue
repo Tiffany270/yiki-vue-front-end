@@ -4,11 +4,12 @@
       <el-col :span="20">
         <div class="grid-content bg-purple">
           <h2>个人中心</h2>
+          <el-button @click="backToMain" round>主页</el-button>
         </div>
       </el-col>
       <el-col :span="2">
         <div v-if="resumeData">
-          <el-button icon="el-icon-edit" @click="edit" type="info" circle></el-button>
+          <el-button icon="el-icon-edit" @click="reedit" type="info" circle></el-button>
         </div>
       </el-col>
       <el-col :span="2">
@@ -22,18 +23,20 @@
     <div class="main-wrapper">
       <div v-if="!resumeData" style="width: 20%; margin: auto;">
         还没有你的简历~
-        <el-button type="primary"  @click="edit" >立即创建</el-button>
+        <el-button type="primary" @click="edit">立即创建</el-button>
       </div>
 
       <el-row v-if="resumeData">
         <!-- 左 -->
         <el-col :span="16">
-          <div class="grid-content bg-purple"></div>
+          <div class="grid-content bg-purple">
+            <h1>{{resumeData.resume.name}}的简历</h1>
+          </div>
 
           <div style="margin-top:30px">
-            <el-tabs :tab-position="tabPosition" style="height: 200px;">
+            <el-tabs :tab-position="tabPosition">
               <el-tab-pane label="投递情况">
-                <el-table :data="sendList" style="width: 100%">
+                <el-table :data="sendList" style="width: 80%">
                   <el-table-column prop="id" label="id" width="180"></el-table-column>
                   <el-table-column prop="uname" label="投递人" width="180"></el-table-column>
                   <el-table-column prop="jname" label="投递职位" width="180"></el-table-column>
@@ -45,7 +48,32 @@
                   </el-table-column>
                 </el-table>
               </el-tab-pane>
-              <el-tab-pane label="其他">配置管理</el-tab-pane>
+              <el-tab-pane label="简历">
+                <div class="main-wrapper">
+                  <div class="right-block">
+                    <el-card class="box-card">
+                      <div slot="header" class="clearfix">
+                        <span class="title">教育经历</span>
+                      </div>
+                      <div class="text">{{resumeData.resume.degree}}毕业于：{{resumeData.resume.school}}</div>
+                    </el-card>
+                  </div>
+                  <div class="title">工作经历</div>
+                  <div v-if="resumeData.workExps">
+                    <div class="box-card" :key="item.name" v-for="item in resumeData.workExps">
+                      <div slot="header" class="clearfix">
+                        <span>{{item.name}}</span>
+                        <span>{{item.opcdate}}</span>
+                        <span>{{item.type}}行业</span>
+                      </div>
+                      <div class="text item">
+                        <div>在{{item.dep}}部门担任{{item.ocp}}职位</div>
+                        <div>详细职责：{{item.text}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </el-tab-pane>
             </el-tabs>
           </div>
         </el-col>
@@ -54,28 +82,12 @@
         <el-col :span="8">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
-              <span>求职意向</span>
-              <el-button style="float: right; padding: 3px 0" type="text">Edit</el-button>
+              <span class="title">求职意向</span>
             </div>
-            <div>地点：{{resumeData.resume.region}}</div>
-            <div>薪资范围：{{resumeData.resume.pay}}</div>
-            <div>期望职位：{{resumeData.resume.occpation}}</div>
+            <div class="text">地点：{{resumeData.resume.region}}</div>
+            <div class="text">薪资范围：{{resumeData.resume.pay}}</div>
+            <div class="text">期望职位：{{resumeData.resume.occpation}}</div>
           </el-card>
-          <div class="main-wrapper">
-            <div class="right-block">
-              <div class="title">教育经历</div>
-            </div>
-            <div class="right-block">
-              <div class="title">工作经历</div>
-
-              <div class="text" :key="item.id" v-for="item in resumeData.workExps">
-                {{item.opcDate}}
-                {{item.dep}}
-                {{item.ocp}}
-                {{item.type}}
-              </div>
-            </div>
-          </div>
         </el-col>
       </el-row>
     </div>
@@ -115,6 +127,10 @@ export default {
     }
   },
   methods: {
+    //返回主页
+    backToMain() {
+      this.$router.push({ path: "/" });
+    },
     getResumeData: function() {
       this.axios({
         method: "get",
@@ -122,6 +138,9 @@ export default {
       }).then(x => {
         this.resumeData = x.data;
       });
+    },
+    reedit() {
+      this.$router.push({ path: "/reeditResume" });
     },
     edit: function() {
       this.$router.push({ path: "/myResume" });
@@ -187,7 +206,7 @@ export default {
   font-weight: bold;
 }
 .right-block {
-  width: 500px;
+  width: 400px;
   height: 140px;
 }
 .main-wrapper {

@@ -2,29 +2,29 @@
   <el-container>
     <el-row class="top-bar" :gutter="20">
       <el-col :span="20">
-        <div class="grid-content bg-purple">
-          <h2>个人中心</h2>
+        <div class="pointer" @click="backToMain">
+          <h2>New for your life!</h2>
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!authname" class="grid-content bg-purple">
+        <div v-if="!auth">
           <a>
             <router-link to="/auth">登录</router-link>
           </a>
         </div>
-        <div v-if="authname" class="grid-content bg-purple">
+        <div v-if="auth">
           <a @click="gotoResume">我的简历</a>
         </div>
       </el-col>
       <el-col :span="2">
-        <div v-if="!authname" class="grid-content bg-purple">
+        <div v-if="!auth" >
           <a>
             <router-link to="/auth">注册</router-link>
           </a>
         </div>
-        <div v-if="authname" class="grid-content bg-purple">
+        <div v-if="auth">
           <a>
-            <router-link to="/auth">退出</router-link>
+            <a @click="quit">退出</a>
           </a>
         </div>
       </el-col>
@@ -32,8 +32,7 @@
     <!-- 上方需要保留 -->
 
     <div v-if="data" class="main-wrapper">
-      <div 
-      class="main-header">
+      <div class="main-header">
         <el-row>
           <el-col :span="6">
             <div>logo</div>
@@ -95,7 +94,39 @@
               <div class="text">{{data.email}}</div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="在招职位" name="third">在招职位</el-tab-pane>
+          <el-tab-pane label="在招职位" name="third">
+            <div v-if="JDlist">
+              <div v-if="JDlist.length===0">该公司没有在招职位~</div>
+
+              <div v-for="item in JDlist" @click="toMainJD(item.jid)" :key="item.jid" class="block">
+                <el-row>
+                  <el-col :span="12">
+                    <div>
+                      <span class="jobtitle">{{item.opc}}</span>
+                      {{item.relDate}}发布
+                    </div>
+                    <div>
+                      <span class="salary">{{item.pay}}</span>
+                      {{item.type}}/{{item.degree}}
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <div class="Ctitle">{{item.cname}}</div>
+                    <div>/{{item.location}}/{{item.exp}}</div>
+                  </el-col>
+                </el-row>
+
+                <el-row class="bg-purple">
+                  <el-col :span="12">
+                    <el-tag type="info">{{item.tab}}</el-tag>
+                  </el-col>
+                  <el-col :span="12">
+                    <div>"{{item.attr}}"</div>
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
+          </el-tab-pane>
           <el-tab-pane label="常见问题" name="fourth">
             <el-collapse v-model="activeNames" @change="handleChange">
               <el-collapse-item title="一致性 Consistency" name="1">
@@ -139,20 +170,38 @@ export default {
       msg: "Welcome to Your Vue.js App",
       input: "",
       fid: null,
-      data: null
+      data: null,
+      JDlist: null
     };
   },
   created() {
     if (localStorage.getItem("auth") !== null) {
       this.auth = JSON.parse(localStorage.getItem("auth"));
-      
     }
   },
   methods: {
+    toMainJD: function(id) {
+      this.$router.push({ path: "/mainJD/" + id });
+    },
+    //---退出
+    quit() {
+      localStorage.clear();
+      this.$message({
+        message: "已退出...",
+        type: "success"
+      });
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    },
+    //返回主页
+    backToMain() {
+      this.$router.push({ path: "/" });
+    },
     handleChange(val) {
       console.log(val);
     },
-    getResumeData: function() {
+    getFirmData: function() {
       this.axios({
         method: "get",
         url: "/firmInfo/" + this.$route.params.id
@@ -160,8 +209,16 @@ export default {
         this.data = x.data;
       });
     },
+    getFirmJDData: function() {
+      this.axios({
+        method: "get",
+        url: "/JDbyC/" + this.$route.params.id
+      }).then(x => {
+        this.JDlist = x.data;
+      });
+    },
     gotoResume: function() {
-      this.$router.push({ path: "/myResume" });
+      this.$router.push({ path: "/detail" });
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
@@ -172,7 +229,8 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.getResumeData();
+      this.getFirmData();
+      this.getFirmJDData();
     }, 0);
   }
 };
@@ -196,6 +254,52 @@ export default {
 .el-tabs__item {
   padding: 0 30px;
   font-size: 18px;
+}
+.pointer {
+  cursor: pointer;
+}
+.bg-purple {
+  padding: 0.5%;
+  background: #d3dce6;
+}
+.block {
+  padding: 1%;
+  color: #555;
+  border: 1px solid #ededed;
+  margin-top: 18px;
+  cursor: pointer;
+}
+.salary {
+  font-size: 16px;
+  color: #fd5f39;
+}
+.jobtitle {
+  margin: 0;
+  font-size: 16px;
+  color: #00b38a;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+  font-weight: bold;
+}
+.Ctitle {
+  font-weight: bold;
+  font-size: 16px;
+  color: #4274a9;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+.inline {
+  position: relative;
+  height: 20px;
+}
+.pay {
+  right: 0;
+  top: 0;
+  position: absolute;
+  font-size: 16px;
+  color: #fa6041;
 }
 .title {
   font-size: 15px;

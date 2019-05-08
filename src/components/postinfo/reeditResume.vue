@@ -3,10 +3,12 @@
     <div class="info-panel-wrapper">
       <div class="step-wrapper">
         <el-steps :active="active" finish-status="success">
-          <el-step title="完善您的简历"></el-step>
+          <el-step title="修改您的简历"></el-step>
           <el-step title="完成"></el-step>
           <el-step title="进行投递"></el-step>
         </el-steps>
+
+        <el-button style="float: right; padding: 3px 0" type="text" @click="back">返回</el-button>
       </div>
 
       <el-tabs class="form-wrapper" v-model="activeName">
@@ -89,14 +91,17 @@
         </el-tab-pane>
 
         <el-tab-pane label="工作经历" name="third">
-          <div v-if="workExpItems.length!==0">
-            <el-card :key="item.name" v-for="item in workExpItems" class="box-card">
+          <div v-if="workExpItems">
+            <el-card :key="index" v-for="(item,index) in workExpItems" class="box-card">
               <div slot="header" class="clearfix">
                 <span>{{item.name}}</span>
                 <span>{{item.opcdate}}</span>
                 <span>{{item.type}}行业</span>
-
-                <el-button style="float: right; padding: 3px 0" type="text">修改</el-button>
+                <el-button
+                  style="float: right; padding: 3px 0"
+                  type="text"
+                  @click="editExp(index)"
+                >修改</el-button>
               </div>
               <div class="text item">
                 <div>在{{item.dep}}部门担任{{item.ocp}}职位</div>
@@ -104,10 +109,9 @@
               </div>
             </el-card>
           </div>
-
-          <el-button type="primary" @click="openExpDialog" icon="el-icon-circle-plus-outline">新增工作经历</el-button>
+          <!-- 暂时删除 -->
+          <!-- <el-button type="primary" @click="openExpDialog" icon="el-icon-circle-plus-outline">新增工作经历</el-button> -->
         </el-tab-pane>
-
         <el-tab-pane label="完成" name="five">
           <div style="width: 20%; margin: auto;">
             <el-button type="primary" @click="beforesubmit">修改</el-button>
@@ -118,7 +122,7 @@
     <div class="bg-1"></div>
     <div class="bg-2"></div>
 
-    <!-- 项目经验弹窗 -->
+    <!-- 项目工作经验弹窗 -->
     <el-dialog title="工作经验" :visible.sync="ExpDialog">
       <el-form :model="form">
         <el-form-item label="任职公司名称" :label-width="formLabelWidth">
@@ -153,6 +157,43 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="ExpDialog = false">取 消</el-button>
         <el-button type="primary" @click="addExp">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 点击修改工作经验弹窗 -->
+    <el-dialog v-if="workExpItem" title="工作经验" :visible.sync="editExpDialog">
+      <el-form :model="workExpItem">
+        <el-form-item label="任职公司名称" :label-width="formLabelWidth">
+          <el-input v-model="workExpItem.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="任职公司行业" :label-width="formLabelWidth">
+          <el-input v-model="workExpItem.type" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="任职公司职位" :label-width="formLabelWidth">
+          <el-input v-model="workExpItem.ocp" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="任职公司部门" :label-width="formLabelWidth">
+          <el-input v-model="workExpItem.dep" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="就职时间" :label-width="formLabelWidth">
+          <div class="block">
+            <span class="demonstration">-</span>
+            <el-date-picker
+              v-model="workExpItem.opcdate"
+              type="monthrange"
+              value-format="yyyy-MM"
+              range-separator="至"
+              start-placeholder="开始月份"
+              end-placeholder="结束月份"
+            ></el-date-picker>
+          </div>
+          <el-form-item label="详细" prop="text">
+            <el-input type="textarea" v-model="workExpItem.text"></el-input>
+          </el-form-item>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editExpDialog = false">取 消</el-button>
+        <el-button type="primary" @click="editChangeOk">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -230,7 +271,9 @@ export default {
       labelPosition: "right",
       //-----项目经验
       ExpDialog: false,
+      editExpDialog: false,
       workExpItems: [],
+      currentExpIndex: null,
       form: {
         uid: null,
         name: "",
@@ -240,6 +283,7 @@ export default {
         opcdate: "",
         text: ""
       },
+      workExpItem: null,
       formLabelWidth: "120px",
       //----确定
       submitDialog: false
@@ -272,6 +316,21 @@ export default {
       this.submitDialog = true;
       this.active = 3;
     },
+    //----返回
+    back() {
+      this.$router.back(-1);
+    },
+    //点击修改单个工作经验
+    editExp(index) {
+      this.currentExpIndex = index;
+      this.editExpDialog = true;
+      this.workExpItem = this.workExpItems[index];
+    },
+    //修改EXP的确认
+    editChangeOk() {
+      this.editExpDialog = false;
+      this.workExpItems[this.currentExpIndex] = this.workExpItem;
+    },
     //确认dialog里的最终确定提交
     submit() {
       const itemData = {
@@ -283,14 +342,14 @@ export default {
       this.active = 3;
       this.axios({
         method: "post",
-        url: "/resume",
+        url: "/updateResume",
         data: itemData
       })
         .then(response => {
           if (response.data === 1) {
-            this.$message("创建成功！");
+            this.$message("修改成功！");
           } else {
-            this.$message.error("创建失败");
+            this.$message.error("修改失败");
           }
         })
         .catch(error => {

@@ -146,7 +146,7 @@ export default {
         });
     },
     gotoResume: function() {
-      this.$router.push({ path: "/myResume" });
+      this.$router.push({ path: "/detail" });
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
