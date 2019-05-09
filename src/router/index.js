@@ -21,6 +21,12 @@ import auth from '@/components/Auth/auth'
 import mainFirm from '@/components/main/mainFirm'
 import mainJD from '@/components/main/mainJD'
 
+import admin from '@/components/admin/admin'
+import userAdmin from '@/components/admin/userAdmin'
+import firmAdmin from '@/components/admin/firmAdmin'
+
+
+
 
 import Vuex from 'vuex'
 import 'es6-promise/auto'
@@ -28,79 +34,100 @@ Vue.use(Router)
 Vue.use(Vuex)
 
 
-const routes = [{
-  path: '/auth',
-  name: 'auth',
-  component: auth
-},
-{
-  path: '/flogin',
-  name: 'flogin',
-  component: flogin
-}, {
-  path: '/fregiste',
-  name: 'fregiste',
-  component: fregiste
-}, {
-  path: '/ulogin',
-  name: 'ulogin',
-  component: ulogin
-}, {
-  path: '/uregiste',
-  name: 'uregiste',
-  component: uregiste
-}, {
-  path: '/',
-  name: 'webMain',
-  component: webMain
-},
-//----点击搜索
-{
-  path: '/search/:ele',
-  name: 'search',
-  component: searchPage
-},
-///----------是post资料的跳转表单
-{
-  path: '/firmInfo',
-  name: 'firmInfo',
-  component: firmInfo
-},
+const routes = [
+  //----管理员
+  {
+    path: '/admin',
+    name: 'admin',
+    component: admin,
+    children: [
+      {
+        name: 'userAdmin',
+        path: 'userAdmin',
+        component: userAdmin
+      },
+      {
+        name: 'firmAdmin',
+        path: 'firmAdmin',
+        component: firmAdmin
+      },
+    ]
 
-//-----update用
-{
-  path: '/reeditResume',
-  name: 'reeditResume',
-  component: reeditResume
-},
-//-----insert用
-{
-  path: '/myResume',
-  name: 'userResume',
-  component: userResume
-},
-//-------------展示页
-{
-  path: '/detail',
-  name: 'detail',
-  component: detail
-},
-{
-  path: '/about',
-  name: 'aboutFirm',
-  component: aboutFirm
-},
-//------点击后附带ID跳进对应的页面
-{
-  path: "/mainFirm/:id",
-  component: mainFirm,
-  name: 'mainFirm'
-},
-{
-  path: "/mainJD/:id",
-  component: mainJD,
-  name: 'mainJD'
-}
+  },
+  //-----权限
+  {
+    path: '/auth',
+    name: 'auth',
+    component: auth
+  },
+  {
+    path: '/flogin',
+    name: 'flogin',
+    component: flogin
+  }, {
+    path: '/fregiste',
+    name: 'fregiste',
+    component: fregiste
+  }, {
+    path: '/ulogin',
+    name: 'ulogin',
+    component: ulogin
+  }, {
+    path: '/uregiste',
+    name: 'uregiste',
+    component: uregiste
+  }, {
+    path: '/',
+    name: 'webMain',
+    component: webMain
+  },
+  //----点击搜索
+  {
+    path: '/search/:ele',
+    name: 'search',
+    component: searchPage
+  },
+  ///----------是post资料的跳转表单
+  {
+    path: '/firmInfo',
+    name: 'firmInfo',
+    component: firmInfo
+  },
+
+  //-----update用
+  {
+    path: '/reeditResume',
+    name: 'reeditResume',
+    component: reeditResume
+  },
+  //-----insert用
+  {
+    path: '/myResume',
+    name: 'userResume',
+    component: userResume
+  },
+  //-------------展示页
+  {
+    path: '/detail',
+    name: 'detail',
+    component: detail
+  },
+  {
+    path: '/about',
+    name: 'aboutFirm',
+    component: aboutFirm
+  },
+  //------点击后附带ID跳进对应的页面
+  {
+    path: "/mainFirm/:id",
+    component: mainFirm,
+    name: 'mainFirm'
+  },
+  {
+    path: "/mainJD/:id",
+    component: mainJD,
+    name: 'mainJD'
+  }
 ]
 
 const router = new Router({
